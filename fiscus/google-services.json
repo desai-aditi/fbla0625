@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "966951324479",
+    "project_id": "fiscus-72161",
+    "storage_bucket": "fiscus-72161.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966951324479:android:b34312bdbe369ae433618a",
+        "android_client_info": {
+          "package_name": "com.desaiaditi.fiscus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "966951324479-kqmmk8374i3l8fg1pi18bvt736e0btmp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.desaiaditi.fiscus",
+            "certificate_hash": "c2970e1a3f5aa83b86c1f502f35b6867ece2dd78"
+          }
+        },
+        {
+          "client_id": "966951324479-d0m8e2q07ql19huof42lal84hsufr4i1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnv3KVJ4eMMvOppcMr-ZMkKySu8zN3NyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "966951324479-d0m8e2q07ql19huof42lal84hsufr4i1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "966951324479-mckkk487nlptpibc2sqd2007lm69facd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.desaiaditi.fiscus"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
