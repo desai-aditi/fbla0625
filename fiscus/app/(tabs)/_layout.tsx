@@ -26,7 +26,7 @@ export default function TabLayout() {
         }}listeners={() => ({
           tabPress: (e) => {
             e.preventDefault();
-            router.push('/addModal');
+            router.push('./modals/add');
           },
         })}
       />

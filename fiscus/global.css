@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import "tailwindcss";
+
+:root {
+  --color-forest-700: #1b4332;
+  --color-forest-600: #004b29;
+  --color-navy-500: #184e77;
+  --color-teal-400: #40916c;
+  --color-gradient-1: linear-gradient(135deg, #1b4332, #184e77);
+  --color-crimson-500: #9b2c2c;
+  --color-sand-400: #d4a373;
+  --color-neutral-50: #f8f8f8;
+}
