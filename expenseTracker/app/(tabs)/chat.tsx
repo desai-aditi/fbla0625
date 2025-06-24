@@ -17,7 +17,7 @@ import {
 import Markdown from 'react-native-markdown-display';
 import Animated, { FadeOut, Layout, SlideInLeft, SlideInRight, SlideInUp, SlideOutDown } from 'react-native-reanimated';
 
-const genAI = new GoogleGenerativeAI(process.env.EXPO_PUBLIC_GEMINI_API_KEY!);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
 interface ChatMessage {
