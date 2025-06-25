@@ -1,9 +1,8 @@
-import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
-import Header from '@/components/Header';
+import Input from '@/components/Input';
 import ModalWrapper from '@/components/ModalWrapper';
 import Typo from '@/components/Typo';
-import { expenseCategories, transactionTypes } from '@/constants/data';
+import { expenseCategories } from '@/constants/data';
 import { colors, radius, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
 import { createOrUpdateTransaction, deleteTransaction } from '@/services/transactionService';
@@ -11,9 +10,10 @@ import { TransactionType } from '@/types';
 import { scale, verticalScale } from '@/utils/styling';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
 export default function TransactionModal() {
@@ -69,6 +69,7 @@ export default function TransactionModal() {
   const onDateChange = (event: DateTimePickerEvent, selectedDate: Date) => {
     const currentDate = selectedDate || transaction.date;
     setTransaction({...transaction, date: currentDate});
+    setShowDatePicker(false)
   }
 
   const onSubmit = async () => {
@@ -134,6 +135,12 @@ export default function TransactionModal() {
 
   const [isFocus, setIsFocus] = useState(false);
 
+  const categoryOptions = [
+    { label: 'Income', value: 'Income' },
+    // { label: '––– Expenses –––', value: 'heading', disabled: true },
+    ...Object.values(expenseCategories)
+  ];
+
   const handleNumpadPress = (value: string) => {
     if (value === 'backspace') {
       if (amountInput.length === 1) {
@@ -185,127 +192,24 @@ export default function TransactionModal() {
   return (
    <ModalWrapper>
       <View style={styles.container}>
-        <Header 
+        {/* <Header 
         title={oldTransaction?.id ? "Edit Transaction" : "Add Transaction"}
         leftIcon={<BackButton />} 
-        style={{marginBottom: spacingY._10}}/>
+        style={{marginBottom: spacingY._10}}/> */}
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
-
-          {/* Amount display */}
-          <View style={styles.amountDisplayContainer}>
-            <Typo style={styles.amountDisplayText} fontWeight={700}>${amountInput}</Typo>
-          </View>
-
-          {/* Numpad */}
-          {renderNumpad()}
-
-          {/* type */}
-          <View style={styles.inputContainer}>
-            <Typo color={colors.neutral200}>Type</Typo>
-            
-            <Dropdown
-              style={styles.dropdownContainer}
-              placeholderStyle={styles.dropdownPlaceholder}
-              selectedTextStyle={styles.dropdownSelectedText}
-              iconStyle={styles.dropdownIcon}
-              data={transactionTypes}
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              itemTextStyle={styles.dropdownItemText}
-              itemContainerStyle={styles.dropdownItemContainer}
-              containerStyle={styles.dropdownListContainer}
-              placeholder={!isFocus ? "Select item" : "..."}
-              value={transaction.type}
-              onChange={item => {
-                setTransaction({...transaction, type: item.value})
-              }}
-            />
-          </View>
-
-          {/* category */}
-          {
-            transaction.type === 'expense' && (
-              <View style={styles.inputContainer}>
-                <Typo color={colors.neutral200}>Expense Category</Typo>
-                
-                <Dropdown
-                  style={styles.dropdownContainer}
-                  placeholderStyle={styles.dropdownPlaceholder}
-                  selectedTextStyle={styles.dropdownSelectedText}
-                  iconStyle={styles.dropdownIcon}
-                  data={Object.values(expenseCategories)}
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  itemTextStyle={styles.dropdownItemText}
-                  itemContainerStyle={styles.dropdownItemContainer}
-                  containerStyle={styles.dropdownListContainer}
-                  placeholder={!isFocus ? "Select category" : "..."}
-                  value={transaction.category}
-                  onChange={item => {
-                    setTransaction({...transaction, category: item.value})
-                  }}
-                />
-              </View>
-            )
-          }
-
-          {/* date */}
-          <View style={styles.inputContainer}>
-            <Typo color={colors.neutral200}>Date</Typo>
-            {
-              !showDatePicker && (
-                <Pressable
-                  style={styles.dateInput}
-                  onPress={() => setShowDatePicker(true)}
-                >
-                  <Typo size={14}>
-                    {(transaction.date as Date).toLocaleDateString()}
-                  </Typo>
-                </Pressable>
-              )
-            }
-
-            {
-              showDatePicker && (
-                <View>
-                  <DateTimePicker
-                    themeVariant='dark'
-                    value={transaction.date as Date}
-                    textColor={colors.white}
-                    mode='date'
-                    display='spinner'
-                    onChange={onDateChange}
-                  />
-
-                  {
-                    Platform.OS === 'ios' && (
-                      <TouchableOpacity
-                        style = {styles.datePickerButton}
-                        onPress={() => setShowDatePicker(false)}
-                      >
-                        <Typo size={15} fontWeight={"500"}>Ok</Typo>
-                      </TouchableOpacity>
-                    )
-                  }
-                </View>
-              )
-            }
-          </View>
-
-          {/* transaction description */}
-          <View style={styles.inputContainer}>
-            <View style={styles.flexRow}>
-              <Typo color={colors.neutral200}>Description</Typo>
-              <Typo color={colors.neutral500} >(optional)</Typo>
+        <View style={styles.details}>
+          <View style={styles.topSection}>
+            {/* Amount display */}
+            <View style={styles.amountDisplayContainer}>
+              <Typo style={styles.amountDisplayText}>${amountInput}</Typo>
             </View>
-
-            <View style={styles.descriptionInputContainer}>
-              <Typo 
-                style={styles.descriptionInput}
+            {/* transaction description */}
+            <View style={styles.inputContainer}>
+              <Input 
                 multiline
+                placeholder='Description'
+                icon={<FontAwesome5 name="file-alt" size={20} color="white" />}
+                value={transaction.description}
                 onPress={() => {}}
                 onChangeText={(value) => 
                   setTransaction({
@@ -313,26 +217,104 @@ export default function TransactionModal() {
                     description: value
                   })
                 }
-              >
-                {transaction.description}
-              </Typo>
+              />
             </View>
           </View>
+            
+          <View style={styles.bottomSection}>
+            {/* pill containers */}
+            <View style={styles.pillRow}>
+              {/* category */}
+              <View style={styles.pill}>
+                <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  selectedTextStyle={styles.dropdownSelectedText}
+                  iconStyle={{display: 'none', width: 0, height: 0}}
+                  data={categoryOptions}
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  itemTextStyle={styles.dropdownItemText}
+                  itemContainerStyle={styles.dropdownItemContainer}
+                  containerStyle={styles.dropdownListContainer}
+                  placeholder={!isFocus ? "Category" : "..."}
+                  value={transaction.category}
+                  onChange={item => {
+                    if (!item.disabled) {
+                      setTransaction({ ...transaction, category: item.value });
+                    }
+                  }}
+                  activeColor="transparent"
+                  renderLeftIcon={() => (
+                    <FontAwesome5
+                      style={styles.icon}
+                      color={isFocus ? 'blue' : 'black'}
+                      name="hand-point-right"
+                      size={20}
+                    />
+                  )}
+                />
+              </View>
 
-        </ScrollView>
+              {/* date */}
+              <View style={styles.pill}>
+                <Pressable
+                  onPress={() => setShowDatePicker(true)}
+                  style={{width: '100%', height: '100%', justifyContent: 'center'}}
+                >
+                  <Typo size={14}>
+                    {format(transaction.date as Date, 'MMM d, yyyy')}
+                  </Typo>
+                </Pressable>
+                {showDatePicker && (
+                  <View style={styles.datePickerPopover}>
+                    <DateTimePicker
+                      themeVariant='dark'
+                      value={transaction.date as Date}
+                      textColor={colors.white}
+                      mode='date'
+                      display='default'
+                      onChange={(event, selectedDate) => {
+                        if (event.type === 'set' && selectedDate) {
+                          setTransaction({...transaction, date: selectedDate});
+                        }
+                      }}
+                    />
+                    <TouchableOpacity
+                      style={styles.datePickerDoneButton}
+                      onPress={() => setShowDatePicker(false)}
+                      activeOpacity={0.8}
+                    >
+                      <Typo fontWeight={700} color={colors.black}>Done</Typo>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
 
-        <View style={styles.footer}>
-          {oldTransaction?.id && !loading && (
-            <Button onPress={showDeleteAlert} style={{backgroundColor: colors.rose, paddingHorizontal: spacingX._15}}>
-              <FontAwesome5 name="trash-can" size={verticalScale(24)} color={colors.white} />
-            </Button>
-          )
-          }
+            {/* Numpad */}
+            {renderNumpad()}
 
-          <Button onPress={onSubmit} style={{ flex: 1}}>
-            <Typo color={colors.black} fontWeight={700}>{oldTransaction?.id ? "Update" : "Add"}</Typo>
-          </Button>
+            {/* footer */}
+            <View style={styles.footer}>
+              {oldTransaction?.id && !loading && (
+                <Button onPress={showDeleteAlert} style={{backgroundColor: colors.rose, paddingHorizontal: spacingX._15}}>
+                  <FontAwesome5 name="trash" size={verticalScale(24)} color={colors.white} />
+                </Button>
+              )
+              }
+
+              <Button onPress={onSubmit} style={{ flex: 1}}>
+                <Typo color={colors.black} fontWeight={700}>{oldTransaction?.id ? "Update" : "Add"}</Typo>
+              </Button>
+            </View>
+          </View>
+        
+        {/* DETAILS END */}
         </View>
+
+        
       </View>
     </ModalWrapper>
   );
@@ -340,10 +322,21 @@ export default function TransactionModal() {
 }
 
 const styles = StyleSheet.create({
+  details: {
+    flexDirection: 'column',
+    flex: 1,
+    justifyContent: 'flex-start'
+  },
+  topSection: {
+    flexShrink: 0,
+  },
+  bottomSection: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
+  },
   container: {
     flex: 1,
     paddingHorizontal: spacingX._20,
-    justifyContent: 'space-between',
   },
   scrollContent: {
     paddingBottom: spacingY._15,
@@ -353,30 +346,45 @@ const styles = StyleSheet.create({
     marginVertical: spacingY._20,
   },
   amountDisplayText: {
-    fontSize: verticalScale(48),
+    fontSize: verticalScale(70),
     color: colors.white,
-    fontWeight: '700',
   },
   numpadContainer: {
+    width: '100%',
+    height: '55%',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: spacingY._20,
-    paddingHorizontal: spacingX._10,
+    justifyContent: 'center',
+    gap: spacingY._10, // gap between rows
   },
   numpadButton: {
-    width: '30%',
+    width: '31%',
     aspectRatio: 1,
-    marginVertical: spacingY._7,
     backgroundColor: colors.neutral800,
-    borderRadius: radius._15,
     justifyContent: 'center',
     alignItems: 'center',
   },
   numpadButtonText: {
-    fontSize: verticalScale(28),
+    fontSize: verticalScale(24),
     color: colors.white,
-    fontWeight: '700',
+  },
+  pill: {
+    position: 'relative',
+    backgroundColor: colors.neutral700,
+    width: '47%',
+    height: verticalScale(40),
+    borderWidth: 1,
+    borderColor: colors.neutral300,
+    paddingHorizontal: spacingX._15,
+    borderRadius: radius._15,
+    borderCurve: "continuous",
+    justifyContent: 'center',
+    overflow: 'visible'
+  },
+  pillRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scale(10)
   },
   footer: {
     flexDirection: 'row',
@@ -384,10 +392,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacingX._20,
     gap: scale(12),
-    paddingTop: spacingY._15,
-    borderTopColor: colors.neutral700,
-    marginBottom: spacingY._5,
-    borderTopWidth: 1
+    marginBottom: spacingY._10,
   },
   datePickerButton: {
     backgroundColor: colors.neutral700,
@@ -397,42 +402,81 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacingY._15,
     borderRadius: radius._10
   },
-  dropdownContainer: {
-    height: verticalScale(50),
-    borderWidth: 1,
-    borderColor: colors.neutral300,
-    paddingHorizontal: spacingX._15,
+  datePickerPopover: {
+    position: 'absolute',
+    top: verticalScale(40),
+    zIndex: 999,
+    padding: spacingY._10,
+    backgroundColor: colors.neutral800,
     borderRadius: radius._15,
-    borderCurve: "continuous"
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+    width: 250,
   },
-  dropdownItemText: { color: colors.white },
+  datePickerCard: {
+    backgroundColor: colors.neutral800,
+    borderRadius: radius._15,
+    padding: spacingY._15,
+    marginTop: spacingY._7,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+    width: '95%',
+    alignItems: 'center',
+  },
+  datePickerDoneButton: {
+    marginTop: spacingY._10,
+    backgroundColor: colors.neutral300,
+    borderRadius: radius._10,
+    paddingVertical: spacingY._7,
+    paddingHorizontal: spacingX._20,
+    alignSelf: 'center',
+  },
+  dropdownContainer: {
+    width: '80%',
+    left: -scale(2),
+  },
+  dropdownItemText: {
+    color: colors.neutral200,
+  },
   dropdownSelectedText: {
     color: colors.white,
     fontSize: verticalScale(14)
   },
   dropdownListContainer: {
     backgroundColor: colors.neutral900,
-    borderRadius: radius._15,
+    borderRadius: radius._20,
     borderCurve: "continuous",
-    paddingVertical: spacingY._7,
+    paddingVertical: spacingY._12,
     top: 5,
-    borderColor: colors.neutral500,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 0},
-    shadowOpacity: 1,
+    shadowOpacity: 0.8,
     shadowRadius: 15,
-    elevation: 5
+    elevation: 6,
+    width: '80%',
+    left: scale(30),
   },
   dropdownPlaceholder: {
     color: colors.white
   },
   dropdownItemContainer: {
     borderRadius: radius._15,
-    marginHorizontal: spacingX._7
+    marginHorizontal: spacingX._12,
+    marginVertical: spacingY._5,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral700,
+    backgroundColor: 'transparent',
   },
   dropdownIcon: {
     height: verticalScale(30),
-    tintColor: colors.neutral300
+    tintColor: colors.neutral300,
+    right: -20
   },
   dateInput: {
     height: verticalScale(50),
@@ -454,7 +498,7 @@ const styles = StyleSheet.create({
   },
   descriptionInputContainer: {
     borderWidth: 1,
-    borderColor: colors.neutral300,
+    borderColor: colors.neutral800,
     borderRadius: radius._15,
     paddingHorizontal: spacingX._15,
     paddingVertical: spacingY._10,
@@ -464,5 +508,9 @@ const styles = StyleSheet.create({
   descriptionInput: {
     color: colors.white,
     fontSize: verticalScale(14),
+  },
+  icon: {
+    marginRight: 5,
+    color: colors.white
   }
 });

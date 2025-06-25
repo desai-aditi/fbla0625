@@ -1,6 +1,8 @@
+import DailyFinancialTip from '@/components/DailyFinancialTip';
+import ExpenseCategoryPieChart from '@/components/ExpenseCategoryPieChart';
 import HomeCard from '@/components/HomeCard';
+import IncomeExpenseChart from '@/components/IncomeExpenseChart';
 import ScreenWrapper from '@/components/ScreenWrapper';
-import TransactionList from '@/components/TransactionList';
 import Typo from '@/components/Typo';
 import { colors, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
@@ -50,8 +52,10 @@ export default function Home() {
             <HomeCard />
           </View>
 
-          {/* transaction list */}
-          <TransactionList data={recentTransactions} loading={loading} emptyListMessage='No transactions found' title={"Recent Transactions"} />
+          <IncomeExpenseChart />
+          {/* <SavingsRateCard /> */}
+          <DailyFinancialTip />
+          <ExpenseCategoryPieChart />
         </ScrollView>
       </View>
     </ScreenWrapper>

@@ -1,7 +1,6 @@
 import Header from '@/components/Header';
 import Loading from '@/components/Loading';
 import ScreenWrapper from '@/components/ScreenWrapper';
-import TransactionList from '@/components/TransactionList';
 import { colors, radius, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
 import { fetchMonthlyStats, fetchWeeklyStats, fetchYearlyStats } from '@/services/transactionService';
@@ -12,7 +11,7 @@ import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 
 
-export default function Stats() {
+export default function IncomeExpenseChart() {
   const {user} = useAuth()
   const [activeIndex, setActiveIndex] = useState(0);
   const [chartData, setChartData] = useState([]);
@@ -130,15 +129,6 @@ export default function Stats() {
                    )
                 }
             </View>
-
-            <View>
-              <TransactionList
-                title ="Recent Transactions"
-                emptyListMessage='no transactions found'
-                data={transactions}
-              />
-            </View>
-
           </ScrollView>
         </View>
       </View>

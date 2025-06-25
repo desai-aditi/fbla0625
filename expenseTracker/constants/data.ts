@@ -4,7 +4,7 @@ export const expenseCategories: ExpenseCategoriesType = {
   groceries: {
     label: "Groceries",
     value: "groceries",
-    icon: "shopping-cart",
+    icon: "cart-shopping",
     bgColor: "#4B5563", // Deep Teal Green
   },
   rent: {

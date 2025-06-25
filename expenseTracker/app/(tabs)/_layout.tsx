@@ -7,7 +7,7 @@ export default function _layout() {
   return (
     <Tabs tabBar={CustomTabs} screenOptions={{ headerShown: false }}>
       <Tabs.Screen name="index"/>
-      <Tabs.Screen name="statistics"/>
+      <Tabs.Screen name="ledger"/>
       <Tabs.Screen
         name='add'
         listeners={() => ({
@@ -17,9 +17,8 @@ export default function _layout() {
           },
         })}
       />
-      <Tabs.Screen name="profile"/>
       <Tabs.Screen name="chat"/>
-      
+      <Tabs.Screen name="profile"/>
     </Tabs>
   );
 };

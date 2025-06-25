@@ -10,17 +10,17 @@ export default function CustomTabs({ state, descriptors, navigation }: BottomTab
     index: (isFocused: boolean) => (
       <Entypo name="home" size={verticalScale(26)} color={isFocused? colors.primary : colors.neutral400}/>
     ),
-    statistics: (isFocused: boolean) => (
-      <Entypo name="line-graph" size={verticalScale(26)} color={isFocused? colors.primary : colors.neutral400}/>
+    ledger: (isFocused: boolean) => (
+      <Entypo name="list" size={verticalScale(26)} color={isFocused? colors.primary : colors.neutral400}/>
     ),
     add: (isFocused: boolean) => (
       <Entypo name="plus" size={verticalScale(26)} color={isFocused? colors.primary : colors.neutral400}/>
     ),
-    profile: (isFocused: boolean) => (
-      <Entypo name="user" size={verticalScale(26)} color={isFocused? colors.primary : colors.neutral400}/>
-    ),
     chat: (isFocused: boolean) => (
       <Entypo name="chat" size={verticalScale(26)} color={isFocused? colors.primary : colors.neutral400}/>
+    ),
+    profile: (isFocused: boolean) => (
+      <Entypo name="user" size={verticalScale(26)} color={isFocused? colors.primary : colors.neutral400}/>
     ),
   }
 
