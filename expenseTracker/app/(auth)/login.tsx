@@ -3,7 +3,7 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import Typo from '@/components/Typo';
-import { colors, spacingX, spacingY } from '@/constants/theme';
+import { colors, radius, shadows, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
 import { verticalScale } from '@/utils/styling';
 import Feather from '@expo/vector-icons/Feather';
@@ -32,40 +32,54 @@ export default function Login() {
     };
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper style={{ backgroundColor: colors.bg }}>
       <View style={styles.container}>
         <BackButton />
 
-        <View style={{gap: 5, marginTop: spacingY._20}}>
-            <Typo size={30} fontWeight={"800"}>Hey,</Typo>
-            <Typo size={30} fontWeight={"800"}>Welcome back!</Typo>
+        <View style={styles.headerContainer}>
+            <Typo size={32} fontWeight={"800"} color={colors.text}>Hey,</Typo>
+            <Typo size={32} fontWeight={"800"} color={colors.primary}>Welcome back!</Typo>
         </View>
 
-        <View style={styles.form}>
-            <Typo size={16} color={colors.textLighter}>Login to your account</Typo>
-            <Input 
-                onChangeText={(value) => (emailRef.current = value)} 
-                placeholder='Enter your email' 
-                icon={<Feather name="at-sign" size={verticalScale(14)} color={colors.neutral300} />}>
-            </Input>
-            <Input 
-                onChangeText={(value) => (passwordRef.current = value)}
-                secureTextEntry 
-                placeholder='Enter your password' 
-                icon={<Feather name="lock" size={verticalScale(14)} color={colors.neutral300} />}>
-            </Input>
+        <View style={styles.formCard}>
+            <View style={styles.form}>
+                <Typo size={16} color={colors.textSecondary} style={styles.subtitle}>
+                    Login to your account
+                </Typo>
+                <Input 
+                    onChangeText={(value) => (emailRef.current = value)} 
+                    placeholder='Enter your email' 
+                    icon={<Feather name="mail" size={verticalScale(16)} color={colors.primary} />}
+                    style={styles.input}
+                />
+                <Input 
+                    onChangeText={(value) => (passwordRef.current = value)}
+                    secureTextEntry 
+                    placeholder='Enter your password' 
+                    icon={<Feather name="lock" size={verticalScale(16)} color={colors.primary} />}
+                    style={styles.input}
+                />
 
-            <Typo style={styles.forgotPassword} size={14}>Forgot Password?</Typo>
+                <Pressable style={styles.forgotPasswordContainer}>
+                    <Typo style={styles.forgotPassword} size={14} color={colors.primary}>
+                        Forgot Password?
+                    </Typo>
+                </Pressable>
 
-            <Button loading={isLoading} onPress={() => handleSubmit()}>
-                <Typo size={16} fontWeight={"600"} color={colors.black}>Login</Typo>
-            </Button>
+                <Button 
+                    loading={isLoading} 
+                    onPress={() => handleSubmit()}
+                    style={styles.loginButton}
+                >
+                    <Typo size={16} fontWeight={"700"} color={colors.white}>Login</Typo>
+                </Button>
+            </View>
         </View>
 
         <View style={styles.footer}>
-            <Typo style={styles.forgotPassword} size={14}>Don't have an account?</Typo>
+            <Typo size={14} color={colors.textMuted}>Don't have an account?</Typo>
             
-            <Pressable onPress={() => router.push('/(auth)/register')}>
+            <Pressable onPress={() => router.push('/(auth)/register')} style={styles.signUpButton}>
                 <Typo size={15} fontWeight={"700"} color={colors.primary}>Sign up</Typo>
             </Pressable>
         </View>
@@ -73,34 +87,57 @@ export default function Login() {
     </ScreenWrapper>
   );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        gap: spacingY._30,
-        paddingHorizontal: spacingX._20,
+        backgroundColor: colors.bg,
     },
-    welcomeText: {
-        fontSize: verticalScale(20),
-        fontWeight: 'bold',
-        color: colors.text
+    headerContainer: {
+        gap: 5, 
+        marginTop: spacingY._30,
+        marginBottom: spacingY._40,
+    },
+    subtitle: {
+        marginBottom: spacingY._10,
+    },
+    formCard: {
+        backgroundColor: colors.cardBg,
+        borderRadius: radius._20,
+        padding: spacingX._25,
+        ...shadows.medium,
+        borderWidth: 1,
+        borderColor: colors.neutral200,
     },
     form: {
-        gap: spacingY._20
+        gap: spacingY._15,
+    },
+    input: {
+        borderColor: colors.neutral300,
+        flex: 1
+    },
+    forgotPasswordContainer: {
+        alignSelf: 'flex-end',
     },
     forgotPassword: {
-        textAlign: 'right',
-        fontWeight: '500',
-        color: colors.text
+        fontWeight: '600',
+    },
+    loginButton: {
+        backgroundColor: colors.primary,
+        borderRadius: radius._12,
+        marginTop: spacingY._5,
+        ...shadows.medium,
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',  
         alignItems: 'center',
-        gap: 5
+        gap: 8,
+        marginTop: spacingY._40,
+        paddingVertical: spacingY._20,
     },
-    footerText: {
-        textAlign: 'center',
-        fontWeight: '500',
-        fontSize: verticalScale(15),
+    signUpButton: {
+        paddingVertical: spacingY._5,
+        paddingHorizontal: spacingX._8,
     }
 });
