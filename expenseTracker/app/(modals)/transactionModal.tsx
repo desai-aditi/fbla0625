@@ -32,7 +32,6 @@ export default function TransactionModal() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const router = useRouter();
 
-
   type paramType = {
     id?: string;
     type?: string;
@@ -137,7 +136,6 @@ export default function TransactionModal() {
 
   const categoryOptions = [
     { label: 'Income', value: 'Income' },
-    // { label: '––– Expenses –––', value: 'heading', disabled: true },
     ...Object.values(expenseCategories)
   ];
 
@@ -190,268 +188,281 @@ export default function TransactionModal() {
   };
 
   return (
-   <ModalWrapper>
+   <ModalWrapper bg={colors.primaryDark}>
       <View style={styles.container}>
-        {/* <Header 
-        title={oldTransaction?.id ? "Edit Transaction" : "Add Transaction"}
-        leftIcon={<BackButton />} 
-        style={{marginBottom: spacingY._10}}/> */}
-
-        <View style={styles.details}>
-          <View style={styles.topSection}>
-            {/* Amount display */}
-            <View style={styles.amountDisplayContainer}>
-              <Typo style={styles.amountDisplayText}>${amountInput}</Typo>
-            </View>
-            {/* transaction description */}
-            <View style={styles.inputContainer}>
-              <Input 
-                multiline
-                placeholder='Description'
-                icon={<FontAwesome5 name="file-alt" size={20} color="white" />}
-                value={transaction.description}
-                onPress={() => {}}
-                onChangeText={(value) => 
-                  setTransaction({
-                    ...transaction,
-                    description: value
-                  })
-                }
-              />
-            </View>
+        {/* Top Section - Amount and Description */}
+        <View style={styles.topSection}>
+          {/* Amount display - Super big at the top */}
+          <View style={styles.amountDisplayContainer}>
+            <Typo style={styles.amountDisplayText}>${amountInput}</Typo>
           </View>
-            
-          <View style={styles.bottomSection}>
-            {/* pill containers */}
-            <View style={styles.pillRow}>
-              {/* category */}
-              <View style={styles.pill}>
-                <Dropdown
-                  style={styles.dropdownContainer}
-                  placeholderStyle={styles.dropdownPlaceholder}
-                  selectedTextStyle={styles.dropdownSelectedText}
-                  iconStyle={{display: 'none', width: 0, height: 0}}
-                  data={categoryOptions}
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  itemTextStyle={styles.dropdownItemText}
-                  itemContainerStyle={styles.dropdownItemContainer}
-                  containerStyle={styles.dropdownListContainer}
-                  placeholder={!isFocus ? "Category" : "..."}
-                  value={transaction.category}
-                  onChange={item => {
-                    if (!item.disabled) {
-                      setTransaction({ ...transaction, category: item.value });
-                    }
-                  }}
-                  activeColor="transparent"
-                  renderLeftIcon={() => (
-                    <FontAwesome5
-                      style={styles.icon}
-                      color={isFocus ? 'blue' : 'black'}
-                      name="hand-point-right"
-                      size={20}
-                    />
-                  )}
-                />
-              </View>
-
-              {/* date */}
-              <View style={styles.pill}>
-                <Pressable
-                  onPress={() => setShowDatePicker(true)}
-                  style={{width: '100%', height: '100%', justifyContent: 'center'}}
-                >
-                  <Typo size={14}>
-                    {format(transaction.date as Date, 'MMM d, yyyy')}
-                  </Typo>
-                </Pressable>
-                {showDatePicker && (
-                  <View style={styles.datePickerPopover}>
-                    <DateTimePicker
-                      themeVariant='dark'
-                      value={transaction.date as Date}
-                      textColor={colors.white}
-                      mode='date'
-                      display='default'
-                      onChange={(event, selectedDate) => {
-                        if (event.type === 'set' && selectedDate) {
-                          setTransaction({...transaction, date: selectedDate});
-                        }
-                      }}
-                    />
-                    <TouchableOpacity
-                      style={styles.datePickerDoneButton}
-                      onPress={() => setShowDatePicker(false)}
-                      activeOpacity={0.8}
-                    >
-                      <Typo fontWeight={700} color={colors.black}>Done</Typo>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
-            </View>
-
-            {/* Numpad */}
-            {renderNumpad()}
-
-            {/* footer */}
-            <View style={styles.footer}>
-              {oldTransaction?.id && !loading && (
-                <Button onPress={showDeleteAlert} style={{backgroundColor: colors.rose, paddingHorizontal: spacingX._15}}>
-                  <FontAwesome5 name="trash" size={verticalScale(24)} color={colors.white} />
-                </Button>
-              )
+          
+          {/* Description input - Small, expandable */}
+          <View>
+            <Input 
+              multiline
+              placeholder='Description'
+              icon={<FontAwesome5 name="file-alt" size={20} color="white" />}
+              value={transaction.description}
+              onPress={() => {}}
+              onChangeText={(value) => 
+                setTransaction({
+                  ...transaction,
+                  description: value
+                })
               }
-
-              <Button onPress={onSubmit} style={{ flex: 1}}>
-                <Typo color={colors.black} fontWeight={700}>{oldTransaction?.id ? "Update" : "Add"}</Typo>
-              </Button>
-            </View>
+            />
           </View>
-        
-        {/* DETAILS END */}
         </View>
 
+        {/* Spacer to push bottom content down */}
+        <View style={styles.spacer} />
         
+        {/* Bottom Section - Pills, Numpad, Button */}
+        <View style={styles.bottomSection}>
+          {/* Pills row */}
+          <View style={styles.pillRow}>
+            {/* Category pill */}
+            <View style={styles.pill}>
+              <Dropdown
+                style={styles.dropdownContainer}
+                placeholderStyle={styles.dropdownPlaceholder}
+                selectedTextStyle={styles.dropdownSelectedText}
+                iconStyle={{display: 'none', width: 0, height: 0}}
+                data={categoryOptions}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                itemTextStyle={styles.dropdownItemText}
+                itemContainerStyle={styles.dropdownItemContainer}
+                containerStyle={styles.dropdownListContainer}
+                placeholder={!isFocus ? "Category" : "..."}
+                value={transaction.category}
+                onChange={item => {
+                  if (!item.disabled) {
+                    setTransaction({ ...transaction, category: item.value });
+                  }
+                }}
+                activeColor="transparent"
+                renderLeftIcon={() => (
+                  <FontAwesome5
+                    style={styles.icon}
+                    color={isFocus ? 'blue' : 'white'}
+                    name="hand-pointer"
+                    size={20}
+                  />
+                )}
+              />
+            </View>
+
+            {/* Date pill */}
+            <View style={styles.pill}>
+              <Pressable
+                onPress={() => setShowDatePicker(true)}
+                style={styles.datePillContent}
+              >
+                <FontAwesome5 name="calendar" size={16} color={colors.white} style={{marginRight: 8}} />
+                <Typo size={14} color={colors.white}>
+                  {format(transaction.date as Date, 'MMM d, yyyy')}
+                </Typo>
+              </Pressable>
+              {showDatePicker && (
+                <View style={styles.datePickerPopover}>
+                  <DateTimePicker
+                    themeVariant='dark'
+                    value={transaction.date as Date}
+                    textColor={colors.white}
+                    mode='date'
+                    display='default'
+                    onChange={(event, selectedDate) => {
+                      if (event.type === 'set' && selectedDate) {
+                        setTransaction({...transaction, date: selectedDate});
+                      }
+                    }}
+                  />
+                  <TouchableOpacity
+                    style={styles.datePickerDoneButton}
+                    onPress={() => setShowDatePicker(false)}
+                    activeOpacity={0.8}
+                  >
+                    <Typo fontWeight={700} color={colors.white}>Done</Typo>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* Numpad */}
+          {renderNumpad()}
+
+          {/* Footer with buttons */}
+          <View style={styles.footer}>
+            {oldTransaction?.id && !loading && (
+              <Button onPress={showDeleteAlert} style={styles.deleteButton}>
+                <FontAwesome5 name="trash" size={verticalScale(20)} color={colors.white} />
+              </Button>
+            )}
+
+            <Button onPress={onSubmit} style={styles.submitButton}>
+              <Typo color={colors.text} fontWeight={700}>
+                {oldTransaction?.id ? "Update" : "Add"}
+              </Typo>
+            </Button>
+          </View>
+        </View>
       </View>
     </ModalWrapper>
   );
-  
 }
 
 const styles = StyleSheet.create({
-  details: {
-    flexDirection: 'column',
-    flex: 1,
-    justifyContent: 'flex-start'
-  },
-  topSection: {
-    flexShrink: 0,
-  },
-  bottomSection: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
-  },
   container: {
     flex: 1,
     paddingHorizontal: spacingX._20,
   },
-  scrollContent: {
-    paddingBottom: spacingY._15,
+  
+  // Top section with amount and description
+  topSection: {
+    paddingTop: spacingY._20,
   },
+  
   amountDisplayContainer: {
     alignItems: 'center',
-    marginVertical: spacingY._20,
+    marginBottom: spacingY._30,
   },
+  
   amountDisplayText: {
-    fontSize: verticalScale(70),
-    color: colors.white,
+    fontSize: verticalScale(80),
+    color: colors.primarySoft,
+    fontWeight: '300',
   },
-  numpadContainer: {
-    width: '100%',
-    height: '55%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: spacingY._10, // gap between rows
+  
+  
+  // Spacer to push content to bottom
+  spacer: {
+    flex: 1,
   },
-  numpadButton: {
-    width: '31%',
-    aspectRatio: 1,
-    backgroundColor: colors.neutral800,
-    justifyContent: 'center',
-    alignItems: 'center',
+  
+  // Bottom section with pills, numpad, and buttons
+  bottomSection: {
+    paddingBottom: spacingY._30,
   },
-  numpadButtonText: {
-    fontSize: verticalScale(24),
-    color: colors.white,
-  },
-  pill: {
-    position: 'relative',
-    backgroundColor: colors.neutral700,
-    width: '47%',
-    height: verticalScale(40),
-    borderWidth: 1,
-    borderColor: colors.neutral300,
-    paddingHorizontal: spacingX._15,
-    borderRadius: radius._15,
-    borderCurve: "continuous",
-    justifyContent: 'center',
-    overflow: 'visible'
-  },
+  
   pillRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: scale(10)
+    justifyContent: 'space-between',
+    gap: scale(12),
   },
+  
+  pill: {
+    position: 'relative',
+    backgroundColor: colors.primaryLight,
+    flex: 1,
+    height: verticalScale(48),
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingHorizontal: spacingX._15,
+    borderRadius: radius._15,
+    justifyContent: 'center',
+    overflow: 'visible',
+  },
+  
+  datePillContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+  },
+  
+  numpadContainer: {
+    width: '100%',
+    height: verticalScale(240),
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    // alignItems: 'stretch',
+    marginBottom: spacingY._25,
+    gap: verticalScale(10),
+  },
+  
+  numpadButton: {
+    width: '31%',
+    aspectRatio: 1.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlignVertical: 'center',
+  },
+  
+  numpadButtonText: {
+    fontSize: verticalScale(28),
+    color: colors.white,
+    fontWeight: '400',
+    textAlignVertical: 'center'
+  },
+  
   footer: {
     flexDirection: 'row',
-    justifyContent: 'center',  
     alignItems: 'center',
-    paddingHorizontal: spacingX._20,
     gap: scale(12),
-    marginBottom: spacingY._10,
+    marginTop: spacingY._15,
   },
-  datePickerButton: {
-    backgroundColor: colors.neutral700,
-    alignSelf: "flex-end",
-    padding: spacingY._7,
-    marginRight: spacingX._7,
-    paddingHorizontal: spacingY._15,
-    borderRadius: radius._10
+  
+  deleteButton: {
+    backgroundColor: colors.rose,
+    paddingHorizontal: spacingX._20,
+    minWidth: verticalScale(50),
   },
+  
+  submitButton: {
+    flex: 1,
+    backgroundColor: colors.neutral100,
+  },
+  
+  // Date picker styles
   datePickerPopover: {
     position: 'absolute',
-    top: verticalScale(40),
+    top: verticalScale(50),
+    left: 0,
+    right: 0,
     zIndex: 999,
-    padding: spacingY._10,
-    backgroundColor: colors.neutral800,
-    borderRadius: radius._15,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8,
-    width: 250,
-  },
-  datePickerCard: {
-    backgroundColor: colors.neutral800,
-    borderRadius: radius._15,
     padding: spacingY._15,
-    marginTop: spacingY._7,
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius._15,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 8,
-    width: '95%',
-    alignItems: 'center',
   },
+  
   datePickerDoneButton: {
-    marginTop: spacingY._10,
-    backgroundColor: colors.neutral300,
+    marginTop: spacingY._15,
+    backgroundColor: colors.primary,
     borderRadius: radius._10,
-    paddingVertical: spacingY._7,
+    paddingVertical: spacingY._10,
     paddingHorizontal: spacingX._20,
     alignSelf: 'center',
   },
+  
+  // Dropdown styles
   dropdownContainer: {
-    width: '80%',
-    left: -scale(2),
+    width: '100%',
   },
+  
   dropdownItemText: {
-    color: colors.neutral200,
+    color: colors.white,
+    fontSize: verticalScale(14),
   },
+  
   dropdownSelectedText: {
     color: colors.white,
-    fontSize: verticalScale(14)
+    fontSize: verticalScale(14),
   },
+  
   dropdownListContainer: {
-    backgroundColor: colors.neutral900,
+    backgroundColor: colors.primaryLight,
     borderRadius: radius._20,
-    borderCurve: "continuous",
     paddingVertical: spacingY._12,
     top: 5,
     shadowColor: colors.black,
@@ -459,58 +470,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 15,
     elevation: 6,
-    width: '80%',
-    left: scale(30),
+    width: '50%'
   },
+  
   dropdownPlaceholder: {
-    color: colors.white
-  },
-  dropdownItemContainer: {
-    borderRadius: radius._15,
-    marginHorizontal: spacingX._12,
-    marginVertical: spacingY._5,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.neutral700,
-    backgroundColor: 'transparent',
-  },
-  dropdownIcon: {
-    height: verticalScale(30),
-    tintColor: colors.neutral300,
-    right: -20
-  },
-  dateInput: {
-    height: verticalScale(50),
-    borderWidth: 1,
-    borderColor: colors.neutral300,
-    paddingHorizontal: spacingX._15,
-    borderRadius: radius._15,
-    borderCurve: "continuous",
-    justifyContent: "center"
-  },
-  inputContainer: {
-    gap: spacingY._10,
-    flex: 1,
-  },
-  flexRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacingX._5
-  },
-  descriptionInputContainer: {
-    borderWidth: 1,
-    borderColor: colors.neutral800,
-    borderRadius: radius._15,
-    paddingHorizontal: spacingX._15,
-    paddingVertical: spacingY._10,
-    height: verticalScale(100),
-    justifyContent: 'flex-start',
-  },
-  descriptionInput: {
     color: colors.white,
     fontSize: verticalScale(14),
   },
+  
+  dropdownItemContainer: {
+    borderRadius: radius._10,
+    marginHorizontal: spacingX._12,
+    marginVertical: spacingY._3,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.primaryDark,
+    backgroundColor: 'transparent',
+  },
+  
   icon: {
-    marginRight: 5,
-    color: colors.white
+    marginRight: spacingX._8,
+    color: colors.white,
   }
 });

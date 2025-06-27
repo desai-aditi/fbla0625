@@ -18,6 +18,7 @@ const TransactionList = ({
   emptyListMessage
 }: TransactionListType) => {
   const router = useRouter();
+  
   const handleClick = (item: TransactionType) => {
     router.push({
       pathname: "/(modals)/transactionModal",
@@ -34,50 +35,50 @@ const TransactionList = ({
   };
 
   // Group transactions by date
-  const grouped = data.reduce((acc: Record<string, TransactionType[]>, item) => {
+  const grouped = data?.reduce((acc: Record<string, TransactionType[]>, item) => {
     const dateObj = (item.date as Timestamp).toDate();
     let label = format(dateObj, "EEE, MMMM d");
-
     if (isToday(dateObj)) label = "Today";
     else if (isYesterday(dateObj)) label = "Yesterday";
-
     if (!acc[label]) acc[label] = [];
     acc[label].push(item);
     return acc;
   }, {});
 
-  const sortedDateKeys = Object.keys(grouped);
+  const sortedDateKeys = Object.keys(grouped || {});
 
   return (
     <View style={styles.container}>
       {title && (
-        <Typo size={20} fontWeight={"500"}>{title}</Typo>
+        <Typo color={colors.text} fontWeight="600" size={18}>{title}</Typo>
       )}
-
       {sortedDateKeys.length > 0 ? (
         sortedDateKeys.map((groupLabel, sectionIndex) => (
-          <View key={groupLabel}>
+          <View key={groupLabel} style={styles.section}>
             <Typo size={16} fontWeight="600" style={styles.dateHeading}>{groupLabel}</Typo>
-            {grouped[groupLabel].map((item, index) => (
-              <TransactionItem
-                key={item.id}
-                item={item}
-                index={sectionIndex * 100 + index}
-                handleClick={handleClick}
-              />
-            ))}
+            <View style={styles.transactionGroup}>
+              {grouped[groupLabel].map((item, index) => (
+                <TransactionItem
+                  key={item.id}
+                  item={item}
+                  index={sectionIndex * 100 + index}
+                  handleClick={handleClick}
+                />
+              ))}
+            </View>
           </View>
         ))
       ) : (
         !loading && (
-          <Typo size={16} color={colors.neutral400} style={{ textAlign: "center", marginTop: spacingY._15 }}>
-            {emptyListMessage}
-          </Typo>
+          <View style={styles.emptyState}>
+            <Typo size={16} color={colors.textMuted} style={styles.emptyMessage}>
+              {emptyListMessage}
+            </Typo>
+          </View>
         )
       )}
-
       {loading && (
-        <View style={{ top: verticalScale(100) }}>
+        <View style={styles.loadingState}>
           <Loading />
         </View>
       )}
@@ -87,31 +88,29 @@ const TransactionList = ({
 
 const TransactionItem = ({ item, index, handleClick }: TransactionItemProps) => {
   const category = item?.type === 'income' ? incomeCategory : expenseCategories[item.category!];
-  const date = (item?.date as Timestamp)?.toDate()?.toLocaleDateString("en-GB", {
+  const date = (item?.date as Timestamp)?.toDate()?.toLocaleDateString("en-US", {
     day: "numeric",
     month: "short",
   });
 
   return (
-    <View>
-      <TouchableOpacity style={styles.row} onPress={() => handleClick(item)}>
-        <View style={[styles.icon, { backgroundColor: category.bgColor }]}>
-          <FontAwesome6 name={category.icon} size={verticalScale(22)} color={colors.white} weight='fill' />
-        </View>
-        <View style={styles.categoryDes}>
-          <Typo size={17}>{category.label}</Typo>
-          <Typo size={12} color={colors.neutral400} textProps={{ numberOfLines: 1 }}>
-            {item.description}
-          </Typo>
-        </View>
-        <View style={styles.amountDate}>
-          <Typo fontWeight='500' color={item?.type === 'income' ? colors.green : colors.rose}>
-            {`${item?.type === 'income' ? "+" : "-"}${item?.amount}`}
-          </Typo>
-          <Typo size={13} color={colors.neutral400}>{date}</Typo>
-        </View>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity style={styles.row} onPress={() => handleClick(item)}>
+      <View style={[styles.icon, { backgroundColor: category.bgColor }]}>
+        <FontAwesome6 name={category.icon} size={verticalScale(20)} color={colors.white} weight='fill' />
+      </View>
+      <View style={styles.categoryDes}>
+        <Typo size={16} fontWeight="500" color={colors.text}>{category.label}</Typo>
+        <Typo size={13} color={colors.textSecondary} textProps={{ numberOfLines: 1 }}>
+          {item.description}
+        </Typo>
+      </View>
+      <View style={styles.amountDate}>
+        <Typo fontWeight='600' size={15} color={item?.type === 'income' ? colors.success : colors.error}>
+          {`${item?.type === 'income' ? "+" : "-"}$${item?.amount}`}
+        </Typo>
+        <Typo size={12} color={colors.textMuted}>{date}</Typo>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -119,37 +118,80 @@ export default TransactionList;
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacingY._17
+    gap: spacingY._10,
+  },
+  section: {
+    marginBottom: spacingY._15,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     gap: spacingX._12,
-    marginBottom: spacingY._12,
-    backgroundColor: colors.neutral800,
-    padding: spacingX._10,
-    borderRadius: radius._17
+    backgroundColor: colors.cardBg,
+    paddingHorizontal: spacingX._10,
+    paddingVertical: spacingY._10
+  },
+  transactionGroup: {
+    borderWidth: 1,
+    borderColor: colors.neutral300,
+    borderRadius: radius._12,
+    overflow: 'hidden',
+    backgroundColor: colors.cardBg,
+    shadowColor: colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
   },
   icon: {
-    height: verticalScale(44),
+    height: verticalScale(42),
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: radius._12,
-    borderCurve: "continuous",
+    borderRadius: radius._10,
+    shadowColor: colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2,
   },
   categoryDes: {
     flex: 1,
-    gap: 2.5
+    gap: 3,
   },
   amountDate: {
     alignItems: "flex-end",
-    gap: 3
+    gap: 4,
   },
   dateHeading: {
-    marginBottom: spacingY._5,
-    marginTop: spacingY._10,
-    color: colors.text
-  }
+    marginVertical: spacingY._5,
+    color: colors.textSecondary,
+    fontSize: verticalScale(16),
+    paddingHorizontal: spacingX._10
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacingY._40,
+    backgroundColor: colors.surfaceBg,
+    borderRadius: radius._15,
+    borderWidth: 1,
+    borderColor: colors.neutral300,
+    borderStyle: 'dashed',
+  },
+  emptyMessage: {
+    textAlign: "center",
+    fontStyle: 'italic',
+  },
+  loadingState: {
+    paddingTop: verticalScale(60),
+    alignItems: 'center',
+  },
 });

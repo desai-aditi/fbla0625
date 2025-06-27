@@ -1,14 +1,14 @@
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { firestore } from '@/config/firebase';
-import { colors } from '@/constants/theme';
+import { colors, radius, shadows, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
 import { scale, verticalScale } from '@/utils/styling';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
-  Platform,
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -17,7 +17,7 @@ import {
 import Markdown from 'react-native-markdown-display';
 import Animated, { FadeOut, Layout, SlideInLeft, SlideInRight, SlideInUp, SlideOutDown } from 'react-native-reanimated';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const genAI = new GoogleGenerativeAI('AIzaSyC0YXx41Yy6CJqVc3wnMqoVffBzLfsZbi4');
 const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
 interface ChatMessage {
@@ -30,7 +30,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 1,
-      text: 'Hey! I can help you understand your spending, save for goals, and budget smarter. Ask me anything!',
+      text: 'Hey! I can help you understand your spending, save for goals, and budget smarter. Ask me anything! 💰',
       sender: 'bot',
     },
   ]);
@@ -103,13 +103,12 @@ User Summary:
     setLoading(true);
 
     const prompt = `
-${userSummary}
-
-User's question: ${newUserMsg.text}
-You are a helpful financial assistant. You are talking to a older teenager / adolescent who is learning to manage their money. Maybe throw a joke in here and there. Maintain authority but don't be cold/distant.
+THIS IS THE USER'S SUMMARY: ${userSummary}
+You are a helpful financial assistant. You are talking to a older teenager / adolescent who is learning to manage their money. Maybe throw a joke in here and there ONLY IF IT FITS THE CONVO. Maintain authority but don't be cold/distant.
 Provide clear, CONCISE, and friendly advice based on the user's financial data above. If you don't have enough information, ask relevant questions to gather more details.
 Don't ramble or make up information. Keep focus on budgeting, saving, and spending habits.
-Respond in a way that is easy to understand and actionable. 
+Respond in a way that is easy to understand and actionable. DO NOT SEND MESSAGES THAT ARE UNNECESSARILY LONG.
+User's question: ${newUserMsg.text}
 `;
 
     try {
@@ -135,47 +134,90 @@ Respond in a way that is easy to understand and actionable.
   };
 
   return (
-    <ScreenWrapper>
-      <View
-      style={styles.container}
-      behavior={Platform.select({ ios: 'padding', android: undefined })}
-      keyboardVerticalOffset={80}
-    >
-      <ScrollView contentContainerStyle={styles.messages} showsVerticalScrollIndicator={false}>
-        {messages.map(msg => (
-          <Animated.View
-            key={msg.id}
-            entering={msg.sender === 'user' ? SlideInRight.delay(50) : SlideInLeft.delay(300)}
-            exiting={FadeOut}
-            layout={Layout}
-            style={[
-              styles.message,
-              msg.sender === 'user' ? styles.userMsg : styles.botMsg,
-            ]}
-          >
-            <Markdown>{msg.text}</Markdown>
-          </Animated.View>
-        ))}
-      </ScrollView>
-      {loading && (
-        <Animated.Text
-          entering={SlideInUp}
-          exiting={SlideOutDown}
-          style={{ textAlign: 'center', fontSize: 18, marginBottom: 8, color: '#888' }}
+    <ScreenWrapper barStyle='dark-content' style={{backgroundColor: colors.surfaceBg}}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <FontAwesome5 name="robot" size={24} color={colors.primary} />
+            <Animated.Text style={styles.headerTitle}>FinanceBot</Animated.Text>
+            <View style={styles.statusIndicator} />
+          </View>
+        </View>
+
+        {/* Messages */}
+        <ScrollView 
+          contentContainerStyle={styles.messages} 
+          showsVerticalScrollIndicator={false}
+          style={styles.messagesContainer}
         >
-          ...
-        </Animated.Text>
-      )}
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={input}
-          onChangeText={setInput}
-          placeholder="Ask about your finances..."
-          style={styles.input}
-        />
-        <Button title="Send" onPress={handleSend} disabled={loading} />
+          {messages.map(msg => (
+            <Animated.View
+              key={msg.id}
+              entering={msg.sender === 'user' ? SlideInRight.delay(50) : SlideInLeft.delay(300)}
+              exiting={FadeOut}
+              layout={Layout}
+              style={[
+                styles.message,
+                msg.sender === 'user' ? styles.userMsg : styles.botMsg,
+              ]}
+            >
+              <Markdown
+                style={{
+                  body: [
+                    msg.sender === 'user' ? styles.messageText : styles.botText
+                  ]
+                }}
+              >
+                {msg.text}
+              </Markdown>
+            </Animated.View>
+          ))}
+        </ScrollView>
+
+        {/* Typing indicator */}
+        {loading && (
+          <Animated.View
+            entering={SlideInUp}
+            exiting={SlideOutDown}
+            style={styles.typingIndicator}
+          >
+            <ActivityIndicator size="small" color={colors.primary} />
+            <Animated.Text style={styles.typingText}>
+              FinanceBot is thinking...
+            </Animated.Text>
+          </Animated.View>
+        )}
+
+        {/* Input Container */}
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              value={input}
+              onChangeText={setInput}
+              placeholder="Ask about your finances..."
+              placeholderTextColor={colors.textMuted}
+              style={styles.input}
+              multiline
+              maxLength={500}
+            />
+            <Animated.View
+              style={[
+                styles.sendButton,
+                { backgroundColor: input.trim() ? colors.primary : colors.neutral300 }
+              ]}
+            >
+              <FontAwesome5 
+                name="paper-plane" 
+                size={18} 
+                color={input.trim() ? colors.white : colors.textMuted}
+                onPress={handleSend}
+                disabled={loading || !input.trim()}
+              />
+            </Animated.View>
+          </View>
+        </View>
       </View>
-    </View>
     </ScreenWrapper>
   );
 }
@@ -183,45 +225,111 @@ Respond in a way that is easy to understand and actionable.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: verticalScale(20),
-    backgroundColor: colors.neutral900,
+    backgroundColor: colors.surfaceBg,
+  },
+  header: {
+    backgroundColor: colors.cardBg,
+    paddingTop: verticalScale(10),
+    paddingBottom: verticalScale(15),
+    paddingHorizontal: spacingX._20,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral200,
+    ...shadows.small,
+    marginTop: spacingY._10
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacingX._10,
+  },
+  headerTitle: {
+    fontSize: verticalScale(20),
+    fontWeight: '700',
+    color: colors.text,
+    flex: 1,
+  },
+  statusIndicator: {
+    width: scale(8),
+    height: scale(8),
+    borderRadius: scale(4),
+    backgroundColor: colors.success,
+  },
+  messagesContainer: {
+    flex: 1,
   },
   messages: {
-    padding: 16,
-    paddingBottom: 100,
+    padding: spacingX._16,
+    paddingBottom: spacingY._20,
+    gap: spacingY._10,
   },
   message: {
-    marginBottom: 12,
-    padding: scale(10),
-    borderRadius: 12,
-    // width: 'fit-content',
+    paddingVertical: spacingY._12,
+    paddingHorizontal: spacingX._16,
+    borderRadius: radius._20,
     maxWidth: '85%',
+    ...shadows.small,
   },
   userMsg: {
     alignSelf: 'flex-end',
-    backgroundColor: '#DCF8C6',
+    backgroundColor: colors.primary,
+    borderBottomRightRadius: radius._8,
   },
   botMsg: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.cardBg,
+    borderBottomLeftRadius: radius._8,
+    borderWidth: 1,
+    borderColor: colors.neutral200,
   },
   messageText: {
-    fontSize: 16,
-    color: '#333',
+    color: colors.white,
+    fontSize: verticalScale(15),
+    lineHeight: verticalScale(20),
+    fontWeight: '500',
   },
-  inputContainer: {
+  botText: {
+    color: colors.text,
+    fontSize: verticalScale(15),
+    lineHeight: verticalScale(20),
+  },
+  typingIndicator: {
     flexDirection: 'row',
-    padding: 12,
-    borderTopWidth: 1,
-    borderColor: '#DDD',
-    backgroundColor: '#FFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacingY._10,
+    gap: spacingX._8,
+  },
+  typingText: {
+    color: colors.textMuted,
+    fontSize: verticalScale(14),
+    fontStyle: 'italic',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    backgroundColor: colors.inputBg,
+    borderRadius: radius._24,
+    paddingHorizontal: spacingX._16,
+    paddingVertical: spacingY._8,
+    gap: spacingX._12,
+    minHeight: verticalScale(48),
+    borderWidth: 1,
+    borderColor: colors.neutral200,
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginRight: 8,
+    color: colors.text,
+    fontSize: verticalScale(16),
+    lineHeight: verticalScale(22),
+    maxHeight: verticalScale(120),
+    paddingVertical: spacingY._8,
+  },
+  sendButton: {
+    width: scale(36),
+    height: scale(36),
+    borderRadius: scale(18),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacingY._2,
   },
 });

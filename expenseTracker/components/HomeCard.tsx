@@ -54,11 +54,11 @@ export default function HomeCard() {
       <View>
         {/* total balance */}
         <View style={styles.totalBalanceRow}>
-          <Typo color={colors.neutral800} size={17} fontWeight={"500"}>Total Balance</Typo>
-          <Entypo name="dots-three-horizontal" size={24} color={colors.black} />
+          <Typo color={colors.primary} size={17} fontWeight={"500"}>Total Balance</Typo>
+          <Entypo name="dots-three-horizontal" size={24} color={colors.primaryDark} />
         </View>
 
-        <Typo style={{marginBottom: spacingY._30}} color={colors.black} size={30} fontWeight={"bold"}>
+        <Typo style={{marginBottom: spacingY._30}} color={colors.primaryDark} size={30} fontWeight={"bold"}>
           $ {loading ? "----" : totals?.balance?.toFixed(2)}
         </Typo>
 
@@ -68,14 +68,14 @@ export default function HomeCard() {
           <View style={{ gap: verticalScale(5)}}>
             <View style={styles.incomeExpense}>
               <View style={styles.statsIcon}>
-                <Feather name="arrow-down" size={verticalScale(15)} color={colors.black} />
+                <Feather name="arrow-up" size={verticalScale(15)} color={colors.black} />
               </View>
-              <Typo size={16} color={colors.neutral700} fontWeight={"500"}>
+              <Typo size={16} color={colors.neutral800} fontWeight={"500"}>
                 Income
               </Typo>
             </View>
             <View style={{alignSelf: "center"}}>
-              <Typo size={17} color={colors.green} fontWeight={"600"}>$ {loading ? "----" : totals?.income?.toFixed(2)}</Typo>
+              <Typo size={17} color={colors.primary} fontWeight={"600"}>$ {loading ? "----" : totals?.income?.toFixed(2)}</Typo>
             </View>
           </View>
 
@@ -83,9 +83,9 @@ export default function HomeCard() {
           <View style={{ gap: verticalScale(5)}}>
             <View style={styles.incomeExpense}>
               <View style={styles.statsIcon}>
-                <Feather name="arrow-up" size={verticalScale(15)} color={colors.black} />
+                <Feather name="arrow-down" size={verticalScale(15)} color={colors.black} />
               </View>
-              <Typo size={16} color={colors.neutral700} fontWeight={"500"}>
+              <Typo size={16} color={colors.neutral800} fontWeight={"500"}>
                 Expenses
               </Typo>
             </View>
@@ -101,9 +101,11 @@ export default function HomeCard() {
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    backgroundColor: colors.neutral100,
+    backgroundColor: colors.white,
     borderRadius: 20,
     padding: spacingX._20,
+    borderWidth: 1,
+    borderColor: colors.neutral300
   },
   bgImage: {
     height: scale(210),
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statsIcon: {
-    backgroundColor: colors.neutral350,
+    backgroundColor: colors.neutral200,
     padding: spacingY._5,
     borderRadius: 50,
   },

@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import React, { ReactNode } from "react";
 import {
+  StatusBarStyle,
   TextInput,
   TextInputProps,
   TextProps,
@@ -12,6 +13,7 @@ import {
 export type ScreenWrapperProps = {
   style?: ViewStyle;
   children: React.ReactNode;
+  barStyle?: StatusBarStyle;
 };
 export type ModalWrapperProps = {
   style?: ViewStyle;

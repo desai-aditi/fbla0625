@@ -3,92 +3,198 @@ import ExpenseCategoryPieChart from '@/components/ExpenseCategoryPieChart';
 import HomeCard from '@/components/HomeCard';
 import IncomeExpenseChart from '@/components/IncomeExpenseChart';
 import ScreenWrapper from '@/components/ScreenWrapper';
+import StatCard from '@/components/StatCard';
 import Typo from '@/components/Typo';
-import { colors, spacingX, spacingY } from '@/constants/theme';
+import { colors, radius, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
-import useFetchData from '@/hooks/useFetchData';
-import { TransactionType } from '@/types';
+import { fetchTotals, fetchTransactions } from '@/services/transactionService';
 import { verticalScale } from '@/utils/styling';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
-import { limit, orderBy, where } from 'firebase/firestore';
-import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 export default function Home() {
   const { user } = useAuth();
   const router = useRouter();
 
-  const constraints = [
-    where("uid", "==", user?.uid),
-    orderBy("date", "desc"),
-    limit(30)
-  ];
+  const [displayRate, setDisplayRate] = useState<string>('0.0');
+  const [savingsRate, setSavingsRate] = useState<number>(0);
+  const [maxExpense, setMaxExpense] = useState<string>('0.0');
 
-  const {data: recentTransactions, error, loading} = useFetchData<TransactionType>("transactions", constraints);
+  useEffect(() => {
+    if (user?.uid) {
+      fetchTotals(user.uid).then((response) => {
+        if (response.success) {
+          const {totals} = response.data;
+          const savings = totals?.income - totals?.expenses;
+          const rate = totals?.income > 0 ? (savings / totals?.income) * 100 : 0;
+          setSavingsRate(rate);
+          setDisplayRate(rate.toFixed(1));
+        }
+      });
+    }
+  }, [user?.uid]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      fetchTransactions(user.uid).then((response) => {
+        if (response.success) {
+          const { transactions } = response.data;
+          // where type is expense and amount is largest
+          const maxExpense = Math.max(...transactions.filter(tx => tx.type === 'expense').map(tx => tx.amount), 0);
+          setMaxExpense(maxExpense.toFixed(1));
+        }
+      })
+    }
+  })
 
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-
-        {/* header */}
-        <View style={styles.header}>
-          <View style={{ gap: 4}}>
-            <Typo size={16} color={colors.neutral400}>Hello,</Typo>
-            <Typo size={20} fontWeight={"500"}>{user?.name}</Typo>
-          </View>
-
-          <TouchableOpacity onPress={() => router.push('/(modals)/searchModal')} style={styles.searchIcon}>
-            <Ionicons name="search" size={verticalScale(22)} color={colors.neutral200} />
-          </TouchableOpacity>
-        </View>
+        
 
         <ScrollView 
           contentContainerStyle={styles.scrollViewStyle}
           showsVerticalScrollIndicator={false}
         >
-          {/* card */}
+          {/* Enhanced Header */}
+          <View style={styles.header}>
+            <View style={styles.welcomeSection}>
+                <Typo size={verticalScale(14)} color={colors.neutral300} style={styles.welcomeText}>
+                  Good morning
+                </Typo>
+                <Typo size={verticalScale(24)} fontWeight="700" color={colors.white} style={styles.nameText}>
+                  {user?.name || 'User'}
+                </Typo>
+              </View>
+              <View style={styles.headerIcon}>
+                <Typo size={verticalScale(24)}>👋</Typo>
+              </View>
+          </View>
+
+          {/* Main Balance Card */}
           <View>
             <HomeCard />
           </View>
 
-          <IncomeExpenseChart />
-          {/* <SavingsRateCard /> */}
-          <DailyFinancialTip />
-          <ExpenseCategoryPieChart />
+          {/* Stats Cards Section */}
+          <View>
+            <Typo size={verticalScale(18)} fontWeight="600" color={colors.text} style={styles.sectionTitle}>
+              Financial Overview
+            </Typo>
+            <View style={styles.statsRow}>
+              <StatCard 
+                title='Savings Rate' 
+                stat={`${displayRate}%`} 
+                desc={savingsRate >= 0 ? 'Good job! Keep it up.' : 'Try to reduce your expenses.'} 
+                trend='up'
+                icon='💰'
+              />
+              <StatCard 
+                title='Most expensive' 
+                stat={`$${maxExpense}`} 
+                desc='purchase' 
+                trend='down'
+                icon='🤑'
+              />
+            </View>
+          </View>
+
+          {/* Charts Section */}
+          <View>
+            <Typo size={verticalScale(18)} fontWeight="600" color={colors.text} style={styles.sectionTitle}>
+              Analytics
+            </Typo>
+            
+            {/* Income vs Expense Chart */}
+            <View style={styles.chartWrapper}>
+              <IncomeExpenseChart/>
+            </View>
+
+            {/* Expense Categories Pie Chart */}
+            <View>
+              <ExpenseCategoryPieChart />
+            </View>
+          </View>
+
+          {/* Daily Tip Section */}
+          <View style={styles.tipSection}>
+            <DailyFinancialTip />
+          </View>
+
+          {/* Bottom spacing for better scroll experience */}
+          <View style={styles.bottomSpacer} />
         </ScrollView>
       </View>
     </ScreenWrapper>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: spacingX._20,
-    marginTop: verticalScale(8)
+    flex: 1
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacingY._10
+    paddingHorizontal: spacingX._20,
+    paddingTop: spacingY._20,
+    paddingBottom: spacingY._15,
+    backgroundColor: colors.primaryDark,
+    borderRadius: radius._15,
+    shadowColor: colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  searchIcon: {
-    backgroundColor: colors.neutral700,
-    padding: spacingX._10,
-    borderRadius: 50,
+  welcomeSection: {
+    flex: 1,
   },
-  floatingButton: {
-    height: verticalScale(50),
+  welcomeText: {
+    marginBottom: spacingY._5,
+    opacity: 0.8,
+  },
+  nameText: {
+    lineHeight: verticalScale(28),
+  },
+  headerIcon: {
     width: verticalScale(50),
-    borderRadius: 100,
-    position: "absolute",
-    bottom: verticalScale(30),
-    right: verticalScale(30),
+    height: verticalScale(50),
+    borderRadius: verticalScale(25),
+    backgroundColor: colors.primary500,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollViewStyle: {
-    marginTop: spacingY._10,
-    paddingBottom: verticalScale(100),
-    gap: spacingY._25
-  }
+    paddingTop: spacingY._20,
+    paddingBottom: spacingY._40,
+    gap: spacingY._20
+  },
+  sectionTitle: {
+    marginBottom: spacingY._15,
+    paddingLeft: spacingX._5,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacingX._15,
+  },
+  chartWrapper: {
+    borderRadius: spacingY._15,
+    overflow: 'hidden',
+    shadowColor: colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: spacingY._20
+  },
 });

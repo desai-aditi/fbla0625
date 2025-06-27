@@ -235,3 +235,85 @@ export const fetchYearlyStats = async (
         return { success: false, msg: err.message }
     }
 }
+
+export const fetchTotals = async (uid: string): Promise<ResponseType> => {
+    try {
+        const db = firestore;
+
+        const transactionsQuery = query(
+            collection(db, "transactions"),
+            where("uid", "==", uid)
+        );
+
+        const querySnapshot = await getDocs(transactionsQuery);
+        const transactions: TransactionType[] = [];
+
+        // Use a Set to track unique categories
+        const categorySet = new Set<string>();
+
+        querySnapshot.forEach((doc) => {
+            const transaction = doc.data() as TransactionType;
+            transaction.id = doc.id;
+            transactions.push(transaction);
+
+            // Only add category if it exists and is not income
+            if (transaction.type === 'expense' && transaction.category) {
+                categorySet.add(transaction.category);
+            }
+        });
+
+        const totals = transactions.reduce((acc, item) => {
+            const amount = Number(item.amount) || 0;
+            if (item.type === 'income') {
+                acc.income += amount;
+            } else if (item.type === 'expense') {
+                acc.expenses += amount;
+            }
+            return acc;
+        }, { income: 0, expenses: 0 });
+
+        // Add totalTransactions and totalCategories to the result
+        return {
+            success: true,
+            data: {
+                totals,
+                transactions,
+                totalTransactions: transactions.length,
+                totalCategories: categorySet.size,
+            },
+        };
+    } catch (err: any) {
+        console.log('error', err)
+        return { success: false, msg: err.message }
+    }
+}
+
+export const fetchTransactions = async (uid: string): Promise<ResponseType> => {
+    try {
+        const db = firestore;
+
+        const transactionsQuery = query(
+            collection(db, "transactions"),
+            where("uid", "==", uid)
+        );
+
+        const querySnapshot = await getDocs(transactionsQuery);
+        const transactions: TransactionType[] = [];
+
+        querySnapshot.forEach((doc) => {
+            const transaction = doc.data() as TransactionType;
+            transaction.id = doc.id;
+            transactions.push(transaction);
+        });
+
+        return {
+            success: true,
+            data: {
+                transactions,
+            },
+        };
+    } catch (err: any) {
+        console.log('error', err)
+        return { success: false, msg: err.message }
+    }
+}
