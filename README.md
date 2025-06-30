@@ -3,7 +3,16 @@
 Fiscus is a **mobile-first financial management app** built specifically for students.  
 It empowers teens to take control of their money through visual insights, real-time tracking, and AI-powered advice.
 
-> 💡 _Named after the Latin word for “money bag,” Fiscus puts budgeting, smart saving, and financial confidence in every student's pocket._
+---
+
+## ⚙️ Tech Stack
+
+| Tech                | Purpose                                  |
+|---------------------|------------------------------------------|
+| `React Native` + `Expo` | Cross-platform mobile development       |
+| `TypeScript`        | Strong typing and safer code             |
+| `Firebase`          | Auth, Firestore DB, real-time sync       |
+| `Google Gemini API` | Personalized AI chat responses           |
 
 ---
 
@@ -51,31 +60,12 @@ Fiscus exists to **make money visible again**, helping teens build lifelong fina
 
 ---
 
-## ⚙️ Tech Stack
-
-| Tech                | Purpose                                  |
-|---------------------|------------------------------------------|
-| `React Native` + `Expo` | Cross-platform mobile development       |
-| `TypeScript`        | Strong typing and safer code             |
-| `Firebase`          | Auth, Firestore DB, real-time sync       |
-| `Google Gemini API` | Personalized AI chat responses           |
-
----
-
 ## 🎨 Design Highlights
 
 - **Mobile-first** design tailored for Gen Z habits
 - **Clean, calming UI** to reduce financial anxiety and increase usability
 - **Color palette** inspired by blues and greens for trust and clarity
 - **User-tested wireframes** iterated based on feedback from real teen users
-
----
-
-## 📸 Screenshots & Demo
-
-- 📽️ **Demo video** available for offline presentations
-- 🧭 Live walkthrough supported with internet access
-- 📄 Flyers with feature summary and contact info available for distribution
 
 ---
 
