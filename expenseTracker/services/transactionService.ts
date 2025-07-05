@@ -9,19 +9,27 @@ export const createOrUpdateTransaction = async (
     transactionData: Partial<TransactionType>
 ): Promise<ResponseType> => {
     try {
-        const {id, type, amount} = transactionData;
-        if(!amount || amount<=0 || !type){
-            return {success: false, msg: "invalid transaction data!"};
+        let { id, type, amount, category } = transactionData;
+
+        // // Automatically set type to 'income' if category is 'income'
+        // if (category === 'income') {
+        //     transactionData.type = 'income';
+        // }
+
+        if (!amount || amount <= 0 || !type) {
+            return { success: false, msg: "invalid transaction data!" };
         }
+
         // create transaction 
-        const transactionRef = id? doc(firestore, "transactions", id) : doc(collection(firestore, "transactions"));
+        const transactionRef = id
+            ? doc(firestore, "transactions", id)
+            : doc(collection(firestore, "transactions"));
 
-        await setDoc(transactionRef, transactionData, {merge: true});
+        await setDoc(transactionRef, transactionData, { merge: true });
 
-
-        return { success: true, data: {...transactionData, id: transactionRef.id}};
+        return { success: true, data: { ...transactionData, id: transactionRef.id } };
     } catch (err: any) {
-        console.log('error', err)
+        // console.log('error', err)
         return { success: false, msg: err.message }
     }
 };
@@ -36,7 +44,7 @@ export const deleteTransaction = async (
 
         return { success: true, data: {id: transactionRef.id}};
     } catch (err: any) {
-        console.log('error', err)
+        // console.log('error', err)
         return { success: false, msg: err.message }
     }
 }
@@ -98,7 +106,7 @@ export const fetchWeeklyStats = async (
             },
         };
     } catch (err: any) {
-        console.log('error', err)
+        // console.log('error', err)
         return { success: false, msg: err.message }
     }
 }
@@ -163,7 +171,7 @@ export const fetchMonthlyStats = async (
             },
         };
     } catch (err: any) {
-        console.log('error', err)
+        // console.log('error', err)
         return { success: false, msg: err.message }
     }
 }
@@ -231,7 +239,7 @@ export const fetchYearlyStats = async (
             },
         };
     } catch (err: any) {
-        console.log('error', err)
+        // console.log('error', err)
         return { success: false, msg: err.message }
     }
 }
@@ -283,7 +291,7 @@ export const fetchTotals = async (uid: string): Promise<ResponseType> => {
             },
         };
     } catch (err: any) {
-        console.log('error', err)
+        // console.log('error', err)
         return { success: false, msg: err.message }
     }
 }
@@ -313,7 +321,7 @@ export const fetchTransactions = async (uid: string): Promise<ResponseType> => {
             },
         };
     } catch (err: any) {
-        console.log('error', err)
+        // console.log('error', err)
         return { success: false, msg: err.message }
     }
 }

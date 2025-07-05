@@ -19,14 +19,21 @@ import { Dropdown } from 'react-native-element-dropdown';
 export default function TransactionModal() {
   const { user, updateUserData } = useAuth();
   const [transaction, setTransaction] = useState<TransactionType>({
-    type: 'expense',
     amount: 0,
     description: "",
     category: "",
+    type: 'expense',
     date: new Date(),
     image: null
   });
-
+  // Ensure type matches category selection
+  useEffect(() => {
+    if (transaction.category === "Income") {
+      setTransaction(prev => ({ ...prev, type: "income" }));
+    } else if (transaction.type !== "expense") {
+      setTransaction(prev => ({ ...prev, type: "expense" }));
+    }
+  }, [transaction.category]);
   const [amountInput, setAmountInput] = useState("0");
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -81,10 +88,10 @@ export default function TransactionModal() {
     }
 
     let transactionData: TransactionType = {
-      type,
       amount,
       description,
       category,
+      type,
       date,
       uid: user?.uid
     }
@@ -121,7 +128,6 @@ export default function TransactionModal() {
     Alert.alert("Transaction", "Are you sure you want to delete this transaction?", [
       {
         text: "Cancel",
-        onPress: () => console.log("cancel delete"),
         style: "cancel"
       },
       {
@@ -333,7 +339,7 @@ const styles = StyleSheet.create({
   
   amountDisplayText: {
     fontSize: verticalScale(80),
-    color: colors.primarySoft,
+    color: colors.white,
     fontWeight: '300',
   },
   
@@ -461,7 +467,7 @@ const styles = StyleSheet.create({
   },
   
   dropdownListContainer: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primaryDark,
     borderRadius: radius._20,
     paddingVertical: spacingY._12,
     top: 5,
@@ -483,7 +489,7 @@ const styles = StyleSheet.create({
     marginHorizontal: spacingX._12,
     marginVertical: spacingY._3,
     borderBottomWidth: 1,
-    borderBottomColor: colors.primaryDark,
+    borderBottomColor: colors.primary,
     backgroundColor: 'transparent',
   },
   

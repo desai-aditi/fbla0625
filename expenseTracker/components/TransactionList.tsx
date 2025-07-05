@@ -100,7 +100,7 @@ const TransactionItem = ({ item, index, handleClick }: TransactionItemProps) => 
       </View>
       <View style={styles.categoryDes}>
         <Typo size={16} fontWeight="500" color={colors.text}>{category.label}</Typo>
-        <Typo size={13} color={colors.textSecondary} textProps={{ numberOfLines: 1 }}>
+        <Typo style={{display: item.description === '' ? 'none' : 'flex'}} size={13} color={colors.textSecondary} textProps={{ numberOfLines: 1 }}>
           {item.description}
         </Typo>
       </View>
@@ -128,9 +128,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: spacingX._12,
-    backgroundColor: colors.cardBg,
-    paddingHorizontal: spacingX._10,
-    paddingVertical: spacingY._10
+    backgroundColor: colors.white,
+    padding: spacingX._15,
   },
   transactionGroup: {
     borderWidth: 1,
@@ -171,10 +170,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   dateHeading: {
-    marginVertical: spacingY._5,
+    marginVertical: spacingY._7,
     color: colors.textSecondary,
     fontSize: verticalScale(16),
-    paddingHorizontal: spacingX._10
+    paddingHorizontal: spacingX._15
   },
   emptyState: {
     alignItems: 'center',

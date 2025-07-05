@@ -1,4 +1,3 @@
-import Header from '@/components/Header';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import Typo from '@/components/Typo';
 import { auth } from '@/config/firebase';
@@ -70,7 +69,6 @@ export default function Profile() {
     Alert.alert("Confirm Logout", "Are you sure you want to logout?", [
       {
         text: 'Cancel',
-        onPress: () => console.log('cancel logout'),
         style: 'cancel'
       },
       {
@@ -93,8 +91,6 @@ export default function Profile() {
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-        <Header title='Profile' style={styles.header}/>
-
         {/* Profile Card */}
         <Animated.View 
           entering={FadeInDown.delay(100).springify()}
@@ -199,12 +195,9 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    marginVertical: spacingY._20,
+    paddingVertical: spacingY._20
   },
   profileCard: {
-    marginTop: spacingY._10,
     borderRadius: radius._20,
     overflow: 'hidden',
     ...shadows.medium,

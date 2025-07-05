@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: spacingY._10,
+    backgroundColor: colors.bg
   },
   headerContainer: {
     backgroundColor: colors.primaryDark,
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: spacingY._10,
-    paddingHorizontal: spacingX._10
+    paddingHorizontal: spacingX._15
   },
   searchIcon: {
     backgroundColor: colors.primary500,

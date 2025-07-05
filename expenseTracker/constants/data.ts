@@ -58,7 +58,7 @@ export const expenseCategories: ExpenseCategoriesType = {
   clothing: {
     label: "Clothing",
     value: "clothing",
-    icon: "tshirt",
+    icon: "shirt",
     bgColor: "#7c3aed", // Dark Indigo
   },
   personal: {

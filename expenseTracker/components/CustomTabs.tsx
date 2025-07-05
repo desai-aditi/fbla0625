@@ -1,6 +1,7 @@
 import { colors, shadows, spacingY } from '@/constants/theme';
 import { verticalScale } from '@/utils/styling';
 import Entypo from '@expo/vector-icons/Entypo';
+import Feather from '@expo/vector-icons/Feather';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -20,7 +21,7 @@ export default function CustomTabs({ state, descriptors, navigation }: BottomTab
       <Entypo name="chat" size={verticalScale(26)} color={isFocused ? colors.primarySoft : colors.neutral100}/>
     ),
     profile: (isFocused: boolean) => (
-      <Entypo name="user" size={verticalScale(26)} color={isFocused ? colors.primarySoft : colors.neutral100}/>
+      <Feather name="user" size={verticalScale(26)} color={isFocused ? colors.primarySoft : colors.neutral100}/>
     ),
   }
 

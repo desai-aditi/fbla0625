@@ -15,7 +15,7 @@ export const updateUser = async (
 
         return {success: true, msg: "updated successfully"};
     } catch (error: any) {
-        console.log('error updating user: ', error);
+        // console.log('error updating user: ', error);
         return {success: false, msg: error?.message}
     }
 }

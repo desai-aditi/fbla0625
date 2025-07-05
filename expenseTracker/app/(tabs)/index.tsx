@@ -9,6 +9,7 @@ import { colors, radius, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
 import { fetchTotals, fetchTransactions } from '@/services/transactionService';
 import { verticalScale } from '@/utils/styling';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -58,7 +59,7 @@ export default function Home() {
           showsVerticalScrollIndicator={false}
         >
           {/* Enhanced Header */}
-          <View style={styles.header}>
+          <LinearGradient colors={[colors.primaryDark, colors.primary]} style={styles.header}>
             <View style={styles.welcomeSection}>
                 <Typo size={verticalScale(14)} color={colors.neutral300} style={styles.welcomeText}>
                   Good morning
@@ -70,7 +71,7 @@ export default function Home() {
               <View style={styles.headerIcon}>
                 <Typo size={verticalScale(24)}>👋</Typo>
               </View>
-          </View>
+          </LinearGradient>
 
           {/* Main Balance Card */}
           <View>
@@ -136,8 +137,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: spacingX._20,
-    paddingTop: spacingY._20,
-    paddingBottom: spacingY._15,
+    paddingVertical: spacingY._20,
     backgroundColor: colors.primaryDark,
     borderRadius: radius._15,
     shadowColor: colors.black,
@@ -166,13 +166,12 @@ const styles = StyleSheet.create({
     width: verticalScale(50),
     height: verticalScale(50),
     borderRadius: verticalScale(25),
-    backgroundColor: colors.primary500,
+    backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   scrollViewStyle: {
-    paddingTop: spacingY._20,
-    paddingBottom: spacingY._40,
+    paddingVertical: spacingY._20,
     gap: spacingY._20
   },
   sectionTitle: {

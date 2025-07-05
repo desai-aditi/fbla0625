@@ -1,4 +1,5 @@
 import Typo from '@/components/Typo';
+import { colors } from '@/constants/theme';
 import { HeaderProps } from '@/types';
 import { verticalScale } from '@/utils/styling';
 import React from 'react';
@@ -14,6 +15,7 @@ export default function Header({title="", leftIcon, style}: HeaderProps) {
                 <Typo size={verticalScale(22)} fontWeight={600} style={{
                     textAlign: 'center',
                     width: leftIcon ? '80%' : '100%',
+                    color: colors.textLight
                 }}>{title}</Typo>
             )
         }

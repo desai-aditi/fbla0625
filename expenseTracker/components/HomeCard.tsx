@@ -32,7 +32,6 @@ export default function HomeCard() {
   const totals:Totals = useMemo(() => {
     
     if (!transactions || transactions.length === 0) {
-      // console.log('no transactions')
       return { balance: 0, income: 0, expenses: 0 };
     }
 

@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.surfaceBg,
+    paddingTop: spacingY._20
   },
   header: {
     backgroundColor: colors.cardBg,
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.neutral200,
     ...shadows.small,
-    marginTop: spacingY._10
+    borderRadius: radius._10
   },
   headerContent: {
     flexDirection: 'row',
@@ -258,8 +259,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messages: {
-    padding: spacingX._16,
-    paddingBottom: spacingY._20,
+    paddingVertical: spacingX._16,
     gap: spacingY._10,
   },
   message: {
@@ -304,10 +304,14 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(14),
     fontStyle: 'italic',
   },
+  inputContainer: {
+    alignItems: 'center',
+    paddingTop: spacingY._20,
+  },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    backgroundColor: colors.inputBg,
+    backgroundColor: colors.white,
     borderRadius: radius._24,
     paddingHorizontal: spacingX._16,
     paddingVertical: spacingY._8,

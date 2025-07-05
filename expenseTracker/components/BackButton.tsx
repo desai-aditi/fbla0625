@@ -1,9 +1,10 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import React from 'react';
+import { colors, radius, spacingY } from '@/constants/theme';
 import { BackButtonProps } from '@/types';
+import { verticalScale } from '@/utils/styling';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
-import AntDesign from '@expo/vector-icons/AntDesign';import { verticalScale } from '@/utils/styling';
-import { colors, radius } from '@/constants/theme';
+import React from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function BackButton({
     style,
@@ -23,7 +24,8 @@ export default function BackButton({
 }
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: colors.neutral600,
+        marginTop: spacingY._7,
+        backgroundColor: colors.primaryLight,
         alignSelf: 'flex-start',
         borderRadius: radius._12,
         borderCurve: 'continuous',

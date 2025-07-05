@@ -42,8 +42,6 @@ export default function ProfileModal() {
       quality: 0.5,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setUserData({...userData, image: result.assets[0]});
     }
@@ -88,7 +86,7 @@ export default function ProfileModal() {
             </TouchableOpacity>
           </View>
           <View style={styles.inputContainer}>
-              <Typo color={colors.neutral200}>Name</Typo>
+              <Typo fontWeight={'bold'} color={colors.textLight}>Name</Typo>
               <Input 
                 placeholder="Name"
                 value={userData.name}
@@ -98,8 +96,8 @@ export default function ProfileModal() {
         </ScrollView>
 
         <View style={styles.footer}>
-          <Button onPress={onSubmit} style={{ flex: 1}}>
-            <Typo color={colors.black} fontWeight={700}>Update</Typo>
+          <Button onPress={onSubmit} style={{ flex: 1, backgroundColor: colors.white}}>
+            <Typo color={colors.text} fontWeight={700}>Update</Typo>
           </Button>
         </View>
       </View>
@@ -123,9 +121,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacingX._20,
     gap: scale(12),
     paddingTop: spacingY._15,
-    borderTopColor: colors.neutral700,
-    marginBottom: spacingY._5,
-    borderTopWidth: 1
+    marginBottom: spacingY._30,
   },
   avatarContainer: {
     position: 'relative',

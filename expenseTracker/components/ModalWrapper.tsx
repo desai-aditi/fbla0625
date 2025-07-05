@@ -6,7 +6,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 export default function ModalWrapper({
     style,
     children,
-    bg = colors.neutral800,
+    bg = colors.primaryDark,
 }: ModalWrapperProps) {
   return (
     <View style={[styles.container, {backgroundColor: bg}, style && style]}>
